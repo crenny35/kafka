@@ -146,7 +146,7 @@ public class QuorumControllerIntegrationTestUtils {
                     .setBrokerEpoch(brokerEpochs.get(brokerId))
                     .setBrokerId(brokerId)
                     .setCurrentMetadataOffset(100000)
-            ).get();
+            ).get(30, TimeUnit.SECONDS);
             assertEquals(new BrokerHeartbeatReply(true, false, false, false), reply);
         }
     }

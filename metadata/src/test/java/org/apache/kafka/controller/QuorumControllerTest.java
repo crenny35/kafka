@@ -263,7 +263,7 @@ public class QuorumControllerTest {
         assertEquals(Collections.singletonMap(BROKER0, ApiError.NONE), future1.get());
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(400)
     public void testFenceMultipleBrokers() throws Throwable {
         List<Integer> allBrokers = Arrays.asList(1, 2, 3, 4, 5);
         List<Integer> brokersToKeepUnfenced = Arrays.asList(1);
@@ -315,10 +315,12 @@ public class QuorumControllerTest {
             Uuid topicIdFoo = createTopicsResponseData.topics().find("foo").topicId();
 
             // Fence some of the brokers
+            log.debug("Waiting for brokers to be fenced");
             TestUtils.waitForCondition(() -> {
                     sendBrokerHeartbeatToUnfenceBrokers(active, brokersToKeepUnfenced, brokerEpochs);
                     for (Integer brokerId : brokersToFence) {
                         if (active.clusterControl().isUnfenced(brokerId)) {
+                            log.debug("Broker {} is still unfenced", brokerId);
                             return false;
                         }
                     }
@@ -326,6 +328,8 @@ public class QuorumControllerTest {
                 }, sessionTimeoutMillis * 3,
                 "Fencing of brokers did not process within expected time"
             );
+            log.debug("Finished waiting for brokers to be fenced");
+
 
             // Send another heartbeat to the brokers we want to keep alive
             sendBrokerHeartbeatToUnfenceBrokers(active, brokersToKeepUnfenced, brokerEpochs);
