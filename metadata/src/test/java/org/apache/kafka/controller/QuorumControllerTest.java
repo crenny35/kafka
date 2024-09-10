@@ -117,6 +117,7 @@ import org.apache.kafka.snapshot.Snapshots;
 import org.apache.kafka.test.TestUtils;
 import org.apache.kafka.timeline.SnapshotRegistry;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -262,7 +263,7 @@ public class QuorumControllerTest {
         assertEquals(Collections.singletonMap(BROKER0, ApiError.NONE), future1.get());
     }
 
-    @Test
+    @RepeatedTest(100)
     public void testFenceMultipleBrokers() throws Throwable {
         List<Integer> allBrokers = Arrays.asList(1, 2, 3, 4, 5);
         List<Integer> brokersToKeepUnfenced = Arrays.asList(1);
